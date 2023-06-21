@@ -5,7 +5,7 @@
         public Pupil()
         {
             Masterminds = new List<Mastermind>();
-            isDeleted = false;
+            IsDeleted = false;
         }
 
         public Guid Id { get; set; }
@@ -14,7 +14,7 @@
         public DateTime CreatedDate { get; set;}
         public DateTime UpdatedDate { get; set;}
         public List<Mastermind> Masterminds { get; set; }
-        public bool isDeleted { get; set; }
+        public bool IsDeleted { get; set; }
         
         public void Update(string name, string description, DateTime createdDate, DateTime updateDate)
         {
@@ -26,7 +26,7 @@
 
         public void Delete()
         {
-            isDeleted = true;
+            IsDeleted = true;
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using AplicativoAPI.Entities;
 using AplicativoAPI.Persistence;
+using AplicativoAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AplicativoAPI.Controllers
 {
@@ -9,41 +11,41 @@ namespace AplicativoAPI.Controllers
     [ApiController]
     public class PupilController : ControllerBase
     {
-        private readonly TutoringDbContext _context;
+        private readonly ITutoringService<Pupil> _servicePupil;
 
-        public PupilController(TutoringDbContext context)
+        public PupilController(ITutoringService<Pupil> servicePupil)
         {
-            _context = context;
+            _servicePupil = servicePupil;
         }
 
         //api/pupil GET
         [HttpGet]
         public IActionResult GetAll() 
         {
-            var pupils = _context.Tutoring.Where(d => !d.isDeleted).ToList();
-
-            return Ok(pupils);
+            return Ok(_servicePupil.GetAll());
         }
 
         //api/pupil/3fa85f64-5717-4562-b3fc-2c963f66afa6 GET
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
-            var pupils = _context.Tutoring.SingleOrDefault(d => d.Id == id);
+            var pupilo = _servicePupil.GetById(id);
 
-            if (pupils == null)
+            //para trazer junto preciso de um service e repository próprio, assim passo como parâmetro incluindo
+
+            if (pupilo == null)
             {
                 return NotFound();
             }
 
-            return Ok(pupils);
+            return Ok(pupilo);
         }
 
         // api/pupil/3fa85f64-5717-4562-b3fc-2c963f66afa6 Post
         [HttpPost]
         public IActionResult Post(Pupil pupils)
         {
-            _context.Tutoring.Add(pupils);
+            _servicePupil.Insert(pupils);
 
             return CreatedAtAction(nameof(GetById), new { id = pupils.Id }, pupils);
         }
@@ -52,16 +54,17 @@ namespace AplicativoAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(Guid id, Pupil input)
         {
-            var pupils = _context.Tutoring.SingleOrDefault(d => d.Id == id);
+            //para resolver aqui devo colocar um servico especifico e não generico enquanto não sei 
+            //com plena certeza fazer
 
-            if (pupils == null)
-            {
+            var pupil = _servicePupil.GetById(id);
+
+            if (pupil == null)
                 return NotFound();
-            }
+            
 
-            pupils.Update(input.Name, input.Description ,input.CreatedDate, input.UpdatedDate);
-
-            return NoContent();
+            _servicePupil.Update(id, input);
+            return Ok(input);
            
         }
 
@@ -69,28 +72,31 @@ namespace AplicativoAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var pupils = _context.Tutoring.SingleOrDefault(d => d.Id == id);
+            var pupil = _servicePupil.GetById(id);
 
-            if(pupils == null)
+            if(pupil == null)
                 return NotFound();
 
-            pupils.Delete();
+            _servicePupil.Delete(id, pupil);
 
-            return NoContent();
+            return Ok("O aluno com o " + id + "foi removido.");
         }
 
+        //fazer a controller do mastermind
 
-        [HttpPost("{id}/masterminds")]
-        public IActionResult PostSpeaker(Guid id, Mastermind mastermind)
-        {
-            var master = _context.Tutoring.SingleOrDefault(d => d.Id == id);
+        //[HttpPost("{id}/masterminds")]
+        //public IActionResult PostSpeaker(Guid id, Mastermind mastermind)
+        //{
+        //    mastermind.Id = id;
+        //    var master = _context.Tutoring.Any(d => d.Id == id);
 
-            if (master == null)
-                    return NotFound();
+        //    if (!master)
+        //            return NotFound();
 
-            master.Masterminds.Add(mastermind);
+        //    _context.Masterminds.Add(mastermind);
+        //    _context.SaveChanges();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
     }
 }

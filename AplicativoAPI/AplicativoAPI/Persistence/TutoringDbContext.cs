@@ -1,14 +1,43 @@
 ﻿using AplicativoAPI.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace AplicativoAPI.Persistence
 {
-    public class TutoringDbContext
+    public class TutoringDbContext : DbContext
     {
-        public List<Pupil> Tutoring { get; set; }
-
-        public TutoringDbContext() 
+        public TutoringDbContext(DbContextOptions<TutoringDbContext> options) : base(options)
         {
-            Tutoring = new List<Pupil>();
+            bool databaseExists = Database.CanConnect();
+
+            if (!databaseExists)
+            {
+                try
+                {
+                    Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Ocorreu um erro ao migrar o banco de dados.", ex);
+                }
+            }
         }
-    }
+
+        public DbSet<Pupil> Tutoring { get; set; }
+        public DbSet<Mastermind> Masterminds { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Pupil>(p => { p.HasKey(pp => pp.Id); p.Property(pp => pp.Name);
+                p.Property(pp => pp.Description).HasMaxLength(200).HasColumnType("varchar(200)");
+                p.Property(pp => pp.CreatedDate).HasColumnName("Created_Date");
+                p.Property(pp => pp.UpdatedDate).HasColumnName("Update_Date");
+                p.HasMany(pp => pp.Masterminds).WithOne().HasForeignKey(s => s.Id);
+            });
+
+            builder.Entity<Mastermind>(m => { m.HasKey(mm => mm.Id); });
+        }
+    } 
+    
+
+      
 }
