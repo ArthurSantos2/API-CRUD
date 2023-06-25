@@ -2,15 +2,16 @@
 
 namespace AplicativoAPI.Persistence.Repositories
 {
-    public class PupilRepository<T> : TutoringRepository<T> where T: Pupil
+    public class PupilRepository : TutoringRepository<Pupil>
     {
-        private readonly TutoringDbContext _context;
+
+       
         public PupilRepository(TutoringDbContext context) : base(context)
         {
-            _context = context;
+           
         }
 
-        public override void Update(Guid id, T t)
+        public override void Update(Guid id, Pupil t)
         {
             var pupil = base.GetById(id);
 

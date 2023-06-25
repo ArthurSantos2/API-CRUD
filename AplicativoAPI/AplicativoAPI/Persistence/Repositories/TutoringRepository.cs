@@ -44,6 +44,7 @@ namespace AplicativoAPI.Persistence.Repositories
         public virtual void Delete(Guid id, T t)
         { 
             _dbContext.Remove(t);
+            _dbContext.SaveChanges();
         }
     }
 

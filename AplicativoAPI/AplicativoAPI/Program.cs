@@ -1,4 +1,5 @@
 
+using AplicativoAPI.Entities;
 using AplicativoAPI.Persistence;
 using AplicativoAPI.Persistence.Repositories;
 using AplicativoAPI.Services;
@@ -27,10 +28,14 @@ namespace AplicativoAPI
             //builder.Services.AddDbContext<TutoringDbContext>(options =>
             //options.UseMySql(ServerVersion.AutoDetect(mySqlConnectionString)));
 
+
             builder.Services.AddScoped(typeof(ITutoringRepository<>), typeof(TutoringRepository<>));
 
             builder.Services.AddScoped(typeof(ITutoringService<>), typeof(TutoringService<>));
-            
+
+
+
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -5,9 +5,9 @@ namespace AplicativoAPI.Services
 {
     public class PupilService : ITutoringService<Pupil>
     {
-        private readonly PupilRepository<Pupil> _pupilRepository;
+        private readonly PupilRepository _pupilRepository;
 
-        public PupilService(PupilRepository<Pupil> pupilRepository)
+        public PupilService(PupilRepository pupilRepository)
         {
             _pupilRepository = pupilRepository;
         }

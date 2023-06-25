@@ -25,6 +25,7 @@ namespace AplicativoAPI.Persistence
         public DbSet<Pupil> Tutoring { get; set; }
         public DbSet<Mastermind> Masterminds { get; set; }
 
+        //fluente API
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Pupil>(p => { p.HasKey(pp => pp.Id); p.Property(pp => pp.Name);
